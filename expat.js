@@ -75,7 +75,7 @@ function getConsulat(idCountry, callback) {
 				}
 			}
 		}
-	callback(consulates);
+		callback(consulates);
 	}); 
 }
 
@@ -99,20 +99,20 @@ function getAlerts(callback) {
 		for(var item in response['alertes']) { 
 			alerts.push(response['alertes'][item]);
 		}
-	callback(alerts); 
+		callback(alerts); 
 	}); 
 }
 
 
 function getCheckAlert(idCountry,callback) { 
-	var alert = []; 
+	var alerts = []; 
 	return getData("http://diplomatie.gouv.fr/fr/mobile/json_full/flux-cav-json-dernieres-minutes.json", function(response) {
 		for(var item in response) { 
 			if(response[item]["iso2"].match(idCountry)) { 
-				alert.push(response[item]); 
+				alerts.push(response[item]); 
 			}
 		} 
-	callback(alert); 
+		callback(alerts); 
 	}); 
 }
 
