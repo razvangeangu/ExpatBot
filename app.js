@@ -8,6 +8,9 @@ var morgan = require('morgan');
 
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'static')));
+
+console.log(path.join(__dirname, 'static'));
 
 // Add headers
 app.use(function (req, res, next) {
