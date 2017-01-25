@@ -49,16 +49,11 @@ io.on('connection', socket => {
 });
 
 function resolve(message) {
-	var response = '';
-	
 	if (message.match('code for Pakistan?')) {
 		expat.getId('Pakistan', function(result) {
-			response = result;
+			console.log(result);
 		});
 	}
-
-	console.log('Bot: ' + response);
-	return response;
 }
 
 http.listen(80, function(){
