@@ -51,7 +51,6 @@ io.on('connection', socket => {
 
 function parse(message) {
 	console.log(bot.parse(message));
-	return 'test';
 }
 
 http.listen(80, function(){
