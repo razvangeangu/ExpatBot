@@ -34,6 +34,5 @@ function addPattern(pattern, responseString, callback, placeholders) {
 //     ChatBot.addChatEntry("That would be "+(1*matches[1]+1*matches[2])+".","bot");
 // },"Say 'compute [number] plus [number]' to make the bot your math monkey");
 
-// TODO: put this on the server
 // Create API call for querry
 // Figure out what querries should we include
