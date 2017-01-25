@@ -1,12 +1,12 @@
+var request = require('request');
+
 function getData(url, callback) {
-	var xhr = new XMLHttpRequest();
-	xhr.onreadystatechange = function() {
-		if (xhr.readyState == 4 && xhr.status == 200) {
-			return callback(JSON.parse(xhr.responseText));
-		}
-	}
-	xhr.open('GET', url, true);
-	xhr.send();
+
+	request(url, function (error, response, body) {
+  		if (!error && response.statusCode == 200) {
+    		return callback(JSON.parse(body));
+	  	}
+	})
 }
 
 function getId(countryName, callback) { 
