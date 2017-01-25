@@ -1,22 +1,20 @@
+var path = require('path');
 var express = require('express');
 var app = express();
-var path = require('path');
-var fs = require('fs');
-var sha1 = require('sha1');
-var exec = require('exec');
-var morgan = require('morgan');
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+//var cors = require('cors');
+//var expat = require('./expat.js');
 
-
+//app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'static')));
-
-console.log(path.join(__dirname, 'static'));
 
 // Add headers
 app.use(function (req, res, next) {
 
 	// Website you wish to allow to connect
-	// res.setHeader('Access-Control-Allow-Origin', 'http://ec2-52-56-124-99.eu-west-2.compute.amazonaws.com:80');
+	res.setHeader('Access-Control-Allow-Origin', 'http://ec2-52-56-124-99.eu-west-2.compute.amazonaws.com:80');
 
 	// Request methods you wish to allow
 	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -36,16 +34,29 @@ app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/static/index.html');
 });
 
-app.get('/api', function(req, res){
-	res.send("<h1>Welcome to this amazing API!</h1>");
+io.on('connection', socket => {
+  username = socket.handshake.query.username;
+  console.log(`${username} connected`);
+
+  socket.on('client:message', data => {
+    console.log(`${data.username}: ${data.message}`);
+
+    // message received from client, now broadcast it to everyone else
+    socket.broadcast.emit('server:message', resolve(data.message));
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`${username} disconnected`);
+  });
 });
 
-app.get('/api/test', function(req, res) {
-	res.send("<h1>Hello, " + req  + "<h1>");
-});
+function resolve(message) {
+	var response = '';
 
-var server = app.listen(80, function() {
-	console.log('Server listening on port 80');
-});
+	console.log("solving the message");
+	return "response";
+}
 
-server.timeout = 5 * 60000;
+http.listen(80, function(){
+  console.log('listening on *:80');
+});
