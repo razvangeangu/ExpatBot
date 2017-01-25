@@ -124,4 +124,4 @@ module.exports.getFlag = getFlag;
 module.exports.getName = getName;
 module.exports.getCountryDetails = getCountryDetails; 
 module.exports.getAlerts = getAlerts; 
-module.exports.getCheckAlert = get getCheckAlert; 
+module.exports.getCheckAlert = getCheckAlert; 

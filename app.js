@@ -4,6 +4,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var expat = require('./expat.js');
+var bot = require('./chatbot.js');
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'static')));
@@ -40,7 +41,7 @@ io.on('connection', socket => {
     console.log(`${data.username}: ${data.message}`);
 
     // message received from client, now broadcast it to everyone else
-    socket.broadcast.emit('server:message', resolve(data.message));
+    socket.broadcast.emit('server:message', parse(data.message));
   });
 
   socket.on('disconnect', () => {
@@ -48,12 +49,9 @@ io.on('connection', socket => {
   });
 });
 
-function resolve(message) {
-	if (message.match('code for Pakistan?')) {
-		expat.getId('Pakistan', function(result) {
-			console.log(result);
-		});
-	}
+function parse(message) {
+	console.log(bot.parse(message));
+	return 'test';
 }
 
 http.listen(80, function(){
