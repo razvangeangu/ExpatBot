@@ -39,7 +39,7 @@ function getName(idCountry, callback) {
  	
 } 
 
-function getVignette(idCountry, callback) {
+function getFlag(idCountry, callback) {
 	return getData("http://diplomatie.gouv.fr/fr/mobile/json_full/flux-cav-json-liste_pays.json", function(response) { 
 		for (var item in response) { 
  			if(item == idCountry) { 
@@ -80,3 +80,8 @@ function getConsulat(idCountry, callback) {
 }
 
 module.exports.getId = getId;
+module.exports.getCoordinates = getCoordinates;
+module.exports.getConsulat = getConsulat;
+module.exports.getEmbassy = getEmbassy;
+module.exports.getFlag = getFlag;
+module.exports.getName = getName;
