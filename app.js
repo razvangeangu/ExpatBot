@@ -6,6 +6,7 @@ var sha1 = require('sha1');
 var exec = require('exec');
 var morgan = require('morgan');
 
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Add headers
@@ -28,11 +29,15 @@ app.use(function (req, res, next) {
 	next();
 });
 
-app.get('/', function(req, res){
+app.get('/', function(req, res) {
+	res.sendFile(__dirname + '/static/index.html');
+});
+
+app.get('/api', function(req, res){
 	res.send("<h1>Welcome to this amazing API!</h1>");
 });
 
-app.get('/test', function(req, res) {
+app.get('/api/test', function(req, res) {
 	res.send("<h1>Hello, " + req  + "<h1>");
 });
 
