@@ -9,7 +9,7 @@ function getData(url, callback) {
 	xhr.send();
 }
 
-function getID(countryName, callback) { 
+function getId(countryName, callback) { 
 	return getData("http://diplomatie.gouv.fr/fr/mobile/json_full/flux-cav-json-liste_pays.json", function(response) { 
 		for(var item in response) { 
 			if(response[item]["nom"].match(countryName)) { 
@@ -79,3 +79,5 @@ function getConsulat(idCountry, callback) {
 	callback(consulates);
 	}); 
 }
+
+module.exports.getId = getId;

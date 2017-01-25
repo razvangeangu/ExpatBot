@@ -3,10 +3,8 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-//var cors = require('cors');
-//var expat = require('./expat.js');
+var expat = require('./expat.js');
 
-//app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'static')));
 
@@ -52,9 +50,15 @@ io.on('connection', socket => {
 
 function resolve(message) {
 	var response = '';
+	
+	if (message.match('code for Pakistan?')) {
+		expat.getId('Pakistan', function(result) {
+			response = result;
+		});
+	}
 
-	console.log("solving the message");
-	return "response";
+	console.log('Bot: ' + response);
+	return response;
 }
 
 http.listen(80, function(){
