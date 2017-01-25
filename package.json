@@ -1,0 +1,8 @@
+{
+  "name": "sample",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "^4.12.3",
+    "multer": "^1.2.1"
+  }
+}
