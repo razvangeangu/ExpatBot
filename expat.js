@@ -79,9 +79,49 @@ function getConsulat(idCountry, callback) {
 	}); 
 }
 
+//CODES: securite, entree, sante, complements (info ultiles), numeros, voyageurs_affaires
+function getCountryDetails(idCountry, code, callback) {
+	return getData('http://diplomatie.gouv.fr/fr/mobile/json_full/flux-cav-json-fiche_pays_' + idCountry + '.json', function(response) {
+		for(var item in response) { 
+			for (var i in response[item]) {
+				if (response[item][i]["code"] && response[item][i]["code"].match(code)) {
+					callback(response[item][i]);
+				}
+			}
+		}
+	})
+}
+
+
+function getAlerts(callback) { 
+	var alerts = []; 
+	return getData("http://diplomatie.gouv.fr/fr/mobile/json_full/flux-cav-json-alertes.json", function(response) { 
+		for(var item in response['alertes']) { 
+			alerts.push(response['alertes'][item]);
+		}
+	callback(alerts); 
+	}); 
+}
+
+
+function getCheckAlert(idCountry,callback) { 
+	var alert = []; 
+	return getData("http://diplomatie.gouv.fr/fr/mobile/json_full/flux-cav-json-dernieres-minutes.json", function(response) {
+		for(var item in response) { 
+			if(response[item]["iso2"].match(idCountry)) { 
+				alert.push(response[item]); 
+			}
+		} 
+	callback(alert); 
+	}); 
+}
+
 module.exports.getId = getId;
 module.exports.getCoordinates = getCoordinates;
 module.exports.getConsulat = getConsulat;
 module.exports.getEmbassy = getEmbassy;
 module.exports.getFlag = getFlag;
 module.exports.getName = getName;
+module.exports.getCountryDetails = getCountryDetails; 
+module.exports.getAlerts = getAlerts; 
+module.exports.getCheckAlert = getCheckAlert; 
