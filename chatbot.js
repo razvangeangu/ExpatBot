@@ -266,6 +266,30 @@ function getCheckAlert(idCountry,callback) {
 	}); 
 }
 
+
+ChatBot.addPattern("(.*)vaccin(.*)( )(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')(.*)", undefined, function(matches, response, callback) {
+	getId(matches[7], function(country) {
+		if (country == undefined) {
+			country = getCountryByCity(matches[7]);
+		} else {
+			country = matches[7];
+		}
+
+		getId(country, function(idCountry) {
+			getCountryDetails(idCountry, "sante", function(sante_info) {
+				callback(formatMessage("Les indications de vaccination pour aller au lieu suivant: " + country + " sont : ", "html", sante_info["texte"] + "\nQuant aux centres de vaccinations, vous trouverez une carte interactive qui vous aidera à en trouver dans votre departement!"));
+			});
+		});
+	});
+
+});
+
+//ChatBot.addPattern("(.*)et (toi|vous)(.*)", formatMessage("Ca va très bien, merci !", 'text', "En quoi puis-je vous aider ?"), undefined);
+
+ChatBot.addPattern("(.*)et (toi|vous)(.*)", undefined, function(matches, response, callback) {
+	callback(formatMessage("Ca va très bien, merci !", 'text', "En quoi puis-je vous aider ?"));
+});
+
 function getCountryByCity(city, callback) {
 
 	var countries = {
