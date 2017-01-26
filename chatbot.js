@@ -258,6 +258,7 @@ function getCountryDetails(idCountry, code, callback) {
 			for (var i in response[item]) {
 				if (response[item][i]["code"] && response[item][i]["code"].match(code)) {
 					result = response[item][i];
+					break;
 				}
 			}
 		}
