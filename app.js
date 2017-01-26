@@ -3,7 +3,6 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var expat = require('./expat.js');
 var bot = require('./chatbot.js');
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -29,7 +28,7 @@ app.use(function (req, res, next) {
 	next();
 });
 
-app.get('/', function(req, res) {
+app.get('/*', function(req, res) {
 	res.sendFile(__dirname + '/static/index.html');
 });
 
@@ -41,17 +40,34 @@ io.on('connection', socket => {
     console.log(`${data.username}: ${data.message}`);
 
     // message received from client, now broadcast it to everyone else
-    socket.broadcast.emit('server:message', parse(data.message));
+    //parse(data.message, function(result) {
+//		io.emit('server:message', result);
+//	});
+
+	// demo
+	if (data.message.match("ambassade")) {
+		io.emit('server:message', {bot: true, body: [{type: 'title', content: "l'ambassade d'allemagne est "}, {type: 'text', content: 'Pariser Platz 5, 10117 Berlin, Allemagne'}]});
+	} else if (data.message.match("consulat")) {
+		io.emit('server:message', {bot: true, body: [{type: 'title', content: "les consulats en Allemagne sont a "}, {type: 'text', content: 'Dusseldorf, Francfort, Hambourg, Munich, Sarrebruck, Stuttgart'}]});
+	} else {
+		
+		io.emit('server:message', {bot: true, body: [{type: 'title', content: "Oops"}, {type: 'text', content: "Pardon je n'ai pas compris votre recherche"}]});
+}
+
   });
 
   socket.on('disconnect', () => {
-    console.log(`${username} disconnected`);
+    //console.log(`${username} disconnected`);
   });
 });
 
-function parse(message) {
-	console.log('Bot: ' + JSON.stringify(bot.parse(message)));
-	return bot.parse(message);
+function parse(message, callback) {
+	//console.log('Bot: ' + JSON.stringify(bot.parse(message)));
+	//return bot.parse(message);
+	bot.parse(message, function(result) {
+		console.log('Bot: ' + JSON.stringify(result));
+		callback(result);
+	});
 }
 
 http.listen(80, function(){
