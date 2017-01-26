@@ -28,7 +28,7 @@ app.use(function (req, res, next) {
 	next();
 });
 
-app.get('/', function(req, res) {
+app.get('/*', function(req, res) {
 	res.sendFile(__dirname + '/static/index.html');
 });
 
@@ -40,13 +40,24 @@ io.on('connection', socket => {
     console.log(`${data.username}: ${data.message}`);
 
     // message received from client, now broadcast it to everyone else
-    parse(data.message, function(result) {
-		socket.broadcast.emit('server:message', result);
-	});
+    //parse(data.message, function(result) {
+//		io.emit('server:message', result);
+//	});
+
+	// demo
+	if (data.message.match("ambassade")) {
+		io.emit('server:message', {bot: true, body: [{type: 'title', content: "l'ambassade d'allemagne est "}, {type: 'text', content: 'Pariser Platz 5, 10117 Berlin, Allemagne'}]});
+	} else if (data.message.match("consulat")) {
+		io.emit('server:message', {bot: true, body: [{type: 'title', content: "les consulats en Allemagne sont a "}, {type: 'text', content: 'Dusseldorf, Francfort, Hambourg, Munich, Sarrebruck, Stuttgart'}]});
+	} else {
+		
+		io.emit('server:message', {bot: true, body: [{type: 'title', content: "Oops"}, {type: 'text', content: "Pardon je n'ai pas compris votre recherche"}]});
+}
+
   });
 
   socket.on('disconnect', () => {
-    console.log(`${username} disconnected`);
+    //console.log(`${username} disconnected`);
   });
 });
 

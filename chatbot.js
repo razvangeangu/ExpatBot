@@ -114,7 +114,8 @@ ChatBot.init();
 
 function formatMessage(message, type, content) {
 	var messageData = {
-      		body: [
+      		bot: true,
+		body: [
 			{
 			  type: 'title',
 			  content: message
