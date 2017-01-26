@@ -50,7 +50,7 @@ io.on('connection', socket => {
 });
 
 function parse(message) {
-	console.log('Bot: ' + bot.parse(message));
+	console.log('Bot: ' + JSON.stringify(bot.parse(message)));
 	return bot.parse(message);
 }
 
