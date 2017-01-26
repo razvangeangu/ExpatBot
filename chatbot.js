@@ -131,6 +131,27 @@ ChatBot.addPattern("^hi$", "Howdy, friend", function(matches, response) {
 	return formatMessage(response, 'text', 'this is a string coming from the API');
 });
 
+
+ChatBot.addPattern("(.*)erasmus(.*)(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')(.*) (.*)", undefined, function(matches, response) {
+    return formatMessage(response, 'text', 'Le programme Erasmus est réservé aux pays de l’espace économique européen ainsi que la Turquie et la Macédoine. Il existe néanmoins le programme Erasmus mundus qui est une extension d’Erasmus à l’échelle mondiale.');
+});
+
+ChatBot.addPattern("(.*)ecoles?(.*)(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')(.*) (.*)", undefined, function(matches, response) {
+    return formatMessage(response, 'html', '<p>Je viens de vous trouver 495 établissements français dans 137 pays regroupant regroupant plus de 340 000 étudiants de tous âges ! <\br> Voici une <a href ="http://www.aefe.fr/reseau-scolaire-mondial/rechercher-un-etablissement">carte</a> de la repartition de ces etablissements dans le monde accompagnee d’un rapport de l’AEFE sur ceux-ci.</p>');
+});
+
+ChatBot.addPattern("(.*)santes?(.*)(en|a|dans (le|la|l)?|de|du|au|le|la|l)( |')(.*) (.*)", "Je viens de vous trouver des informations concernant la santé à l'endroit suivant" + matches[6], function(matches, response) {
+    return formatMessage(response, 'html', 'L’OMS ou Organisation Mondiale de la Santé, une institution spécialisée de l\'ONU, publie régulièrement des classements des meilleurs systèmes de santé mondiaux. Voici le plus recent de ces <a href = "rapports http://thepatientfactor.com/canadian-health-care-information/world-health-organizations-ranking-of-the-worlds-health-systems">rapports</a>');
+});
+
+ChatBot.addPattern("((b|B)onjour|(b|B)onsoir|(s|S)alut|(h|H)ey|(y|Y)o|hi|hello|slt|bjr)(.*)", "Bonjour ! Comment allez vous ?", function(matches, response) {
+    return formatMessage(response, 'text', "En quoi puis-je vous aider ?");
+});
+
+ChatBot.addPattern("(.*)et (toi|vous)(.*)","Ca va très bien, merci !", function(matches, response) {
+    return formatMessage(response, 'text', "En quoi puis-je vous aider ?");
+});
+
 //ChatBot.addPattern("(?:my name is|I'm|I am) (.*)", "hi $1, thanks for talking to me today", function (matches) {
 //     ChatBot.setHumanName(matches[1]);
 //},"Say 'My name is [your name]' or 'I am [name]' to be called that by the bot");
