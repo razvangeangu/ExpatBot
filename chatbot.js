@@ -252,14 +252,18 @@ function getConsulat(idCountry, callback) {
 //CODES: securite, entree, sante, complements (info ultiles), numeros, voyageurs_affaires
 function getCountryDetails(idCountry, code, callback) {
 	return getData('http://diplomatie.gouv.fr/fr/mobile/json_full/flux-cav-json-fiche_pays_' + idCountry + '.json', function(response) {
+		var result = undefined;
+
 		for(var item in response) { 
 			for (var i in response[item]) {
 				if (response[item][i]["code"] && response[item][i]["code"].match(code)) {
-					return callback(response[item][i]);
+					result = response[item][i];
 				}
 			}
 		}
-	})
+
+		callback(result);
+	});
 }
 
 
@@ -389,14 +393,14 @@ ChatBot.addPattern("(.*)consulat( )((de france|francaise)( ))?(en|a|dans (le|la)
 // sanitary info for each country 
 
 ChatBot.addPattern("(.*)vaccin(.*)( )(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
-        getId(matches[7], function(country) {
+        getId(matches[6], function(country) {
                 if (country == undefined) {
-                        country = getCountryByCity(matches[7]);
+                        country = getCountryByCity(matches[6]);
                 }
 
                 getId(country, function(idCountry) {
                         getCountryDetails(idCountry, "sante", function(sante_info) {
-                                callback(formatMessage("Les indications de vaccination pour aller au lieu suivant: " + country + " sont : ", "html", sante_info["texte"] + "\nQuant aux centres de vaccinations, vous trouverez une carte interactive qui vous aidera à en trouver dans votre departement!"));
+                                callback(formatMessage("Les indications de vaccination pour aller au lieu suivant: " + matches[6] + " sont : ", "html", sante_info["texte"] + "\nQuant aux centres de vaccinations, vous trouverez une carte interactive qui vous aidera à en trouver dans votre departement!"));
                         });
                 });
         });
