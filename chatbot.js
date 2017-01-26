@@ -152,6 +152,10 @@ ChatBot.addPattern("(.*)et (toi|vous)(.*)","Ca va très bien, merci !", function
     return formatMessage(response, 'text', "En quoi puis-je vous aider ?");
 });
 
+ChatBot.addPattern("(.*)((comment (ca|sa) va)|(comment allez(-| )vous)|(comment vas(-| )tu)|(comment tu vas))(.*)","Ca va très bien, merci !", function(matches, response) {
+    return formatMessage(response, 'text', "En quoi puis-je vous aider ?");
+});
+
 //ChatBot.addPattern("(?:my name is|I'm|I am) (.*)", "hi $1, thanks for talking to me today", function (matches) {
 //     ChatBot.setHumanName(matches[1]);
 //},"Say 'My name is [your name]' or 'I am [name]' to be called that by the bot");
