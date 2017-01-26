@@ -37,12 +37,12 @@ app.get('/*', function(req, res) {
 
 io.on('connection', socket => {
   username = socket.handshake.query.username;
-  console.log(`${username} connected`);
+  console.log(`${username} a connecte avec ip: ${socket.handshake.address}`);
 
   socket.on('client:message', data => {
     console.log(`${data.username}: ${data.message}`);
 
-    logStream.write(socket.handshake.address + ": " + data.message);
+    logStream.write(socket.handshake.address + ": " + data.message + "\n");
 
     // message received from client, now broadcast it to everyone else
     parse(data.message, function(result) {
