@@ -300,22 +300,22 @@ ChatBot.addPattern("(.*)et (toi|vous)(.*)", undefined, function(matches, respons
 	callback(formatMessage("Ca va très bien, merci !", 'text', "En quoi puis-je vous aider ?"));
 });
 
-ChatBot.addPattern("(.*)santes?(.*)(en|a|dans (le|la|l)?|de|du|au|le|la|l)( |')(.*) (.*)", undefined, function(matches, response, callback) {
+ChatBot.addPattern("(.*)santes?(.*) (en|a|dans (le|la|l)?|de|du|au|le|la|l)( |')(.*) (.*)", undefined, function(matches, response, callback) {
         callback(formatMessage("Je viens de vous trouver des informations concernant la santé à l'endroit suivant", 'html', "L’OMS ou Organisation Mondiale de la Santé, une institution spécialisée de l\'ONU, publie régulièrement des classements des meilleurs systèmes de santé mondiaux. Voici le plus recent de ces \<a href = \"rapports http://thepatientfactor.com/canadian-health-care-information/world-health-organizations-ranking-of-the-worlds-health-systems\"\>rapports\</a\>"));
 });
 
 
-ChatBot.addPattern("(.*)erasmus(.*)(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')(.*) (.*)", undefined, function(matches, response, callback) {
+ChatBot.addPattern("(.*)erasmus(.*) (en|a|dans (le|la)?|de|du|au|le|la|l?)( |')(.*) (.*)", undefined, function(matches, response, callback) {
         callback(formatMessage(undefined, 'text', "Le programme Erasmus est réservé aux pays de l’espace économique européen ainsi que la Turquie et la Macédoine. Il existe néanmoins le programme Erasmus mundus qui est une extension d’Erasmus à l’échelle mondiale."));
 });
 
 
-ChatBot.addPattern("(.*)ecoles?(.*)(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')(.*) (.*)", undefined, function(matches, response, callback) {
+ChatBot.addPattern("(.*)ecoles?(.*) (en|a|dans (le|la)?|de|du|au|le|la|l?)( |')(.*) (.*)", undefined, function(matches, response, callback) {
         callback(formatMessage(undefined, 'html', "<p>Je viens de vous trouver 495 établissements français dans 137 pays regroupant regroupant plus de 340 000 étudiants de tous âges ! <\br> Voici une <a href =\"http://www.aefe.fr/reseau-scolaire-mondial/rechercher-un-etablissement\">carte</a> de la repartition de ces etablissements dans le monde accompagnee d’un rapport de l’AEFE sur ceux-ci.</p>"));
 });
 
 
-ChatBot.addPattern("(.*)ecoles?(.*)(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')(.*) (.*)", undefined, function(matches, response, callback) {
+ChatBot.addPattern("(.*)ecoles?(.*) (en|a|dans (le|la)?|de|du|au|le|la|l?)( |')(.*) (.*)", undefined, function(matches, response, callback) {
         callback(formatMessage(undefined, 'html', "<p>Je viens de vous trouver 495 établissements français dans 137 pays regroupant regroupant plus de 340 000 étudiants de tous âges ! <\br> Voici une <a href =\"http://www.aefe.fr/reseau-scolaire-mondial/rechercher-un-etablissement\">carte</a> de la repartition de ces etablissements dans le monde accompagnee d’un rapport de l’AEFE sur ceux-ci.\</p\>"));
 });
 
@@ -340,7 +340,7 @@ ChatBot.addPattern("(.*)demenage(.*)", undefined, function(matches, response, ca
 
 
 // address of the embassy
-ChatBot.addPattern("(.*)(adresse|localisation|trouve)(.*)(ambassade)(.*)( )(en|a|dans (le|la)?|de|du|aux?|le|la|l?)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
+ChatBot.addPattern("(.*)ambassade( )((de france|francaise)( ))?(en|a|dans (le|la)?|de|du|aux?|le|la|l|d?)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
         getId(matches[10], function(country) {
                 if (country == undefined) {
                         country = getCountryByCity(matches[10]);
@@ -358,7 +358,7 @@ ChatBot.addPattern("(.*)(adresse|localisation|trouve)(.*)(ambassade)(.*)( )(en|a
 
 // address of the consulat TO VERIFY
 
-ChatBot.addPattern("(.*)(adresse|localisation|trouve)(.*)(consulat)(.*)( )(en|a|dans (le|la)?|de|du|aux?|le|la|l?)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
+ChatBot.addPattern("(.*)consulat( )((de france|francaise)( ))?(en|a|dans (le|la)?|de|du|aux?|le|la|l|d?)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
         getId(matches[10], function(country) {
                 if (country == undefined) {
                         country = getCountryByCity(matches[10]);
@@ -390,6 +390,11 @@ ChatBot.addPattern("(.*)vaccin(.*)( )(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')
                 });
         });
 
+});
+
+ChatBot.addPattern("(.*)((voter?)|(procuration)|(election)|(electorale?))(.*) (en|a|dans (le|la|l)?|de|du|aux?|le|la|l)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
+    
+    callback(formatMessage(response, 'text', "Pour voter en France, depuis le lieu \""+ matches[11]+"\", il est possible de faire une procuration ou bien de vous inscrire sur les listes électorales du consulat ou ((de l('| )ambassade) | (du consulat)) depuis le lieu \""+ matches[11]+"\", afin de voter sur place."));
 });
 
 //ChatBot.addPattern("(.*)et (toi|vous)(.*)", formatMessage("Ca va très bien, merci !", 'text', "En quoi puis-je vous aider ?"), undefined);
