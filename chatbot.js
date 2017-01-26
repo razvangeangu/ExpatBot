@@ -326,18 +326,37 @@ ChatBot.addPattern("((b|B)onjour|(b|B)onsoir|(s|S)alut|(h|H)ey|(y|Y)o|hi|hello|s
 
 
 ChatBot.addPattern("(.*)(animal|animaux)(.*)", "response", undefined, function(matches, response, callback) {
-        callback(formatMessage(undefined, 'html', "Cela dépendra du nombre, du pays et de l’animal en question! Voilà une page qui vous renseignera plus en détail sur la question. https://www.service-public.fr/particuliers/vosdroits/F21374"));
+        callback(formatMessage(undefined, 'html', "<p>Cela dépendra du nombre, du pays et de l’animal en question! Voilà une <a href=\"https://www.service-public.fr/particuliers/vosdroits/F21374\">page</a> qui vous renseignera plus en détail sur la question.</p>"));
 });
 
 
 ChatBot.addPattern("(.*)( )visa( )(.*)( )((en|a|dans (le|la)?|de|du|aux?|le|la|l?)( |'))?(.*)", undefined, function(matches, response, callback) {
-        callback(formatMessage(undefined, 'html', "En tout cas pas vous n'avez pas besoin de visa pour les pays de l'EEE et la suite. Pour plus d'informations regardez sur cette page du service public: https://www.service-public.fr/particuliers/vosdroits/F1358"));
+        callback(formatMessage(undefined, 'html', "<p>En tout cas pas vous n'avez pas besoin de visa pour les pays de l'EEE et la suite. Pour plus d'informations regardez sur cette <a href=\"https://www.service-public.fr/particuliers/vosdroits/F1358\">page</a> du service public:</p>"));
 });
 
 ChatBot.addPattern("(.*)demenage(.*)", undefined, function(matches, response, callback) {
-        callback(formatMessage(undefined, 'html', "Je vous ai trouvé un comparateur pour votre déménagement international! Voici: http://www.comparerdemenageurs.fr/v1/"));
+        callback(formatMessage(undefined, 'html', "<p>Je vous ai trouvé un comparateur pour votre déménagement international! <a href=\"http://www.comparerdemenageurs.fr/v1/\">Le voici.</a></p>));
 });
 
+ChatBot.addPattern("(.*)(rencontrer?s?|reseau|groupe|comm?unn?aute|amicale)( )(.*)( )(en|a|dans (le|la)?|de|du|aux?|le|la|l?)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
+        callback(formatMessage(undefined, 'html', "<p>Quand j’étais jeune expat, ce site a beaucoup aidé à mon <a href=\"http://www.expat.com/fr/\">intégration: </a> ! Il me semble qu’il y a une communauté d’expats à cet endroit. Selon la ville dans laquelle vous vous rendez, il y aussi assez souvent des groupes facebook pour se créer un réseau d’amis. Bon courage!</p>"));
+});
+
+ChatBot.addPattern("(.*)(chocs?|differences?|cultures?|cafard|solitude)(.*)", undefined, function(matches, response, callback) {
+        callback(formatMessage(undefined, 'html', "<p>Le choc culturel a tendance à frapper chaque individu d'une manière différente, et même des membres d'une même famille peuvent avoir des réactions très différentes au changement. La clé est de comprendre le phénomène et de s'y préparer. Vous risquez de vivre ce choc en quatre étapes: après l'arrivée, la plupart des gens ressentent une euphorie initiale. Cela est parfois appelé \"la période de lune de miel\".<br/>Puis, un désenchantement soudain, une irritabilité, confusion, peut-être même ressentiment à l'égard de votre pays d'adoption. Les différences entre votre nouvelle maison et lieu d'origine deviennent des sources de frustration. Ensuite vous sentirez un progressif ajustement à la vie d'étranger. Finalement, c'est la dernière étape, vous faites vraiment l'expérience d'adaptation et de bi-culturalisme. Plutôt que de perdre une partie de vous-même, vous êtes devenu une personne plus multi-culture en communion saine avec votre pays d’adoption.</p>"));
+});
+
+ChatBot.addPattern("(.*)(assur(er?|ances?)( )(.*)", undefined, function(matches, response, callback) {
+        callback(formatMessage(undefined, 'html', "<p>Pour les assurances à l'étranger le panel de choix est assez grand… Entre la CFE, Expat Assure et plein d’autre… <a href=\"https://www.service-public.fr/particuliers/vosdroits/F2169\">Cette page</a> est vraiment complète et j'espère qu’elle saura bien vous diriger vers l’assurance la plus adaptée pour vous!</p>"));
+});
+
+ChatBot.addPattern("(.*)(formalites?|avant de partir|avant(.*)depart)(.*)", undefined, function(matches, response, callback) {
+        callback(formatMessage(undefined, 'html', "<p>Veuillez vous assurer que vous avez bien un passeport en cours de validité et vérifier si le pays en question exige une certaine durée de validité et si un visa est nécessaire. Aussi vérifiez que vos vaccinations sont à jour et si d’autre sont demandés par votre pays d’accueil.<br/>Si vous désirez plus d’informations sur quoi que ce soit, veuillez préciser votre requête.</p>"));
+});
+
+ChatBot.addPattern("(.*) tele(vision)? (.*)", undefined, function(matches, response, callback) {
+        callback(formatMessage(undefined, 'html', "<p>Pour regarder la télévision française à l’étranger il vous faut utiliser un VPN ou réseau privé virtuel qui vous localise en France lorsque vous visitez les sites ou applications des chaînes de télévision. Une deuxième option serait d’utiliser un Proxy</p>"));
+});
 
 // address of the embassy
 ChatBot.addPattern("(.*)ambassade( )((de france|francaise)( ))?(en|a|dans (le|la)?|de|du|aux?|le|la|l|d?)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
