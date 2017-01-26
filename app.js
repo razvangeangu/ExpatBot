@@ -4,6 +4,9 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var bot = require('./chatbot.js');
+var fs = require('fs');
+
+var logStream = fs.createWriteStream(__dirname + '/access.log', {flags: 'a'});
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'static')));
@@ -38,6 +41,8 @@ io.on('connection', socket => {
 
   socket.on('client:message', data => {
     console.log(`${data.username}: ${data.message}`);
+
+    logStream.write(socket.handshake.address + ": " + data.message);
 
     // message received from client, now broadcast it to everyone else
     parse(data.message, function(result) {

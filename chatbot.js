@@ -92,7 +92,7 @@ var ChatBot = function () {
             	}
 		if (!matchedSomething && i == patterns.length - 1) {
 		    wrongEntries.write(text + '\n');
-		    callback({bot: true, body: [{type: 'title', content: "Oops"}, {type: 'text', content: "Pardon je n'ai pas compris votre recherche"}]});
+		    callback({bot: true, body: [{type: 'title', content: "Oups"}, {type: 'text', content: "Pardon je n'ai pas compris votre recherche"}]});
 		}
 	     }
         },
@@ -222,7 +222,8 @@ function getEmbassy(idCountry, callback) {
 			if(item == idCountry) { 
 				for (var i in response[item]) { 
 					if(response[item][i]['type'].match('ambassade')) {
-						result = response[item][i]["adresse"] + ", " + response[item][i]["ville"]; 
+						result = response[item][i]["adresse"] + ", " + response[item][i]["ville"];
+						break; 
 					}
 				}
 			}
@@ -293,11 +294,11 @@ function getCheckAlert(idCountry,callback) {
 
 
 ChatBot.addPattern("(.*)vaccin(.*)( )(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')(.*)", undefined, function(matches, response, callback) {
-	getId(matches[7], function(country) {
+	getId(matches[6], function(country) {
 		if (country == undefined) {
-			country = getCountryByCity(matches[7]);
+			country = getCountryByCity(matches[6]);
 		} else {
-			country = matches[7];
+			country = matches[6];
 		}
 
 		getId(country, function(idCountry) {
@@ -326,19 +327,19 @@ ChatBot.addPattern("(.*)erasmus(.*) (en|a|dans (le|la|l)?|de|du|aux?|le|la|l)( |
 
 
 ChatBot.addPattern("(.*)ecoles?(.*) (en|a|dans (le|la|l)?|de|du|aux?|le|la|l)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
-        callback(formatMessage(undefined, 'html', "<p>Je viens de vous trouver 495 établissements français dans 137 pays regroupant regroupant plus de 340 000 étudiants de tous âges ! <\br> Voici une <a href =\"http://www.aefe.fr/reseau-scolaire-mondial/rechercher-un-etablissement\">carte</a> de la repartition de ces etablissements dans le monde accompagnee d’un rapport de l’AEFE sur ceux-ci.</p>"));
+        callback(formatMessage(undefined, 'html', "<p>Je viens de vous trouver 495 établissements français dans 137 pays regroupant regroupant plus de 340 000 étudiants de tous âges ! <br> Voici une <a href =\"http://www.aefe.fr/reseau-scolaire-mondial/rechercher-un-etablissement\">carte</a> de la repartition de ces etablissements dans le monde accompagnee d’un rapport de l’AEFE sur ceux-ci.</p>"));
 });
 
 
 ChatBot.addPattern("((b|B)onjour|(b|B)onsoir|(s|S)alut|(h|H)ey|(y|Y)o|hi|hello|slt|bjr)(.*)", undefined, function(matches, response, callback) {
-        callback(formatMessage("Ca va très bien, merci !", 'text', "En quoi puis-je vous aider ?"));
+        callback(formatMessage("Ca va très bien, merci !", 'text', "En quoi puis-je vous aider?"));
 });
 
-
+/*
 ChatBot.addPattern("(.*)(animal|animaux)(.*)", "response", undefined, function(matches, response, callback) {
         callback(formatMessage(undefined, 'html', "<p>Cela dépendra du nombre, du pays et de l’animal en question! Voilà une <a href=\"https://www.service-public.fr/particuliers/vosdroits/F21374\">page</a> qui vous renseignera plus en détail sur la question.</p>"));
 });
-
+*/
 
 ChatBot.addPattern("(.*)( )visa( )(.*)( )((en|a|dans (le|la)?|de|du|aux?|le|la|l?)( |'))?(.*)", undefined, function(matches, response, callback) {
         callback(formatMessage(undefined, 'html', "<p>En tout cas pas vous n'avez pas besoin de visa pour les pays de l'EEE et la suite. Pour plus d'informations regardez sur cette <a href=\"https://www.service-public.fr/particuliers/vosdroits/F1358\">page</a> du service public:</p>"));
@@ -396,11 +397,14 @@ ChatBot.addPattern("(.*)consulat( )((de france|francaise)( ))?(en|a|dans (le|la)
                 if (country == undefined) {
                         country = getCountryByCity(matches[9]);
 			getId(country, function(idCountry) {
-				callback(formatMessage("Les consulats de France du lieu suivant: " + matches[9] + " se situent aux adresses suivantes : ", "html", address));
+
+				var result = address.map(function(x) { return x["nom"] + ", " + x["adresse"] }).join("\n");
+				callback(formatMessage("Les consulats de France du lieu suivant: " + matches[9] + " se situent aux adresses suivantes : ", "html", result));
 			})
                 } else {
-			getConsulat(idCountry, function(address) {
-				callback(formatMessage("Les consulats de France du lieu suivant: " + matches[9] + " se situent aux adresses suivantes : ", "html", address));
+			getConsulat(country, function(address) {
+				var result = address.map(function(x) { return x["nom"] + ", " + x["adresse"] }).join("\n");
+				callback(formatMessage("Les consulats de France du lieu suivant: " + matches[9] + " se situent aux adresses suivantes : ", "html", result));
 			});
 		}
 
@@ -413,22 +417,18 @@ ChatBot.addPattern("(.*)consulat( )((de france|francaise)( ))?(en|a|dans (le|la)
 // sanitary info for each country 
 
 ChatBot.addPattern("(.*)vaccin(.*)( )(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
-        getId(matches[6], function(country) {
-                if (country == undefined) {
-                        country = getCountryByCity(matches[6]);
-                }
-
-                getId(country, function(idCountry) {
-                        getCountryDetails(idCountry, "sante", function(sante_info) {
-                                callback(formatMessage("Les indications de vaccination pour aller au lieu suivant: " + matches[6] + " sont : ", "html", sante_info["texte"] + "\nQuant aux centres de vaccinations, vous trouverez une carte interactive qui vous aidera à en trouver dans votre departement!"));
-                        });
-                });
+        getId(matches[7], function(country) {	
+		getCountryDetails(country, "sante", function(sante_info) {
+			if (sante_info != undefined) {
+				callback(formatMessage("Les indications de vaccination pour aller au lieu suivant: " + matches[7] + " sont : ", "html", sante_info["texte"] + "\nQuant aux centres de vaccinations, vous trouverez une carte interactive qui vous aidera à en trouver dans votre departement!"));
+			}
+		});
         });
 
 });
 
 ChatBot.addPattern("(.*)((voter?)|(procuration)|(election)|(electorale?))(.*) (en|a|dans (le|la|l)?|de|du|aux?|le|la|l)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
-    callback(formatMessage("Pour voter en France, depuis le lieu " + matches[11], 'text', "Il est possible de faire une procuration ou bien de vous inscrire sur les listes électorales du consulat ou de l'ambassade depuis le lieu \"" + matches[11]+ "\", afin de voter sur place."));
+    callback(formatMessage("Pour voter en France, depuis le lieu " + matches[10], 'text', "Il est possible de faire une procuration ou bien de vous inscrire sur les listes électorales du consulat ou de l'ambassade depuis le lieu \"" + matches[10]+ "\", afin de voter sur place."));
 });
 
 //ChatBot.addPattern("(.*)et (toi|vous)(.*)", formatMessage("Ca va très bien, merci !", 'text', "En quoi puis-je vous aider ?"), undefined);
