@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 var ChatBot = function () {
 
     //// common vars
@@ -13,7 +15,7 @@ var ChatBot = function () {
     // a callback for after a chat entry has been added
     var addChatEntryCallback;
 
-    var botResponse;
+    var wrongEntries = fs.createWriteStream("wrongEntries.log", { flags: 'w' });
 
     return {
         init: function() {
@@ -23,7 +25,7 @@ var ChatBot = function () {
                 humanName: 'You',
                 patterns: [],
                 addChatEntryCallback: function(text, origin) {
-               	    return text;
+			return text;
 		}
             }
 
@@ -65,6 +67,8 @@ var ChatBot = function () {
 	    r = r.replace(new RegExp(/\?/g), "");
 	    text = r;
 
+	    var matchedSomething = false;
+
             // check for custom patterns
             for (var i = 0; i < patterns.length; i++) {
                 var pattern = patterns[i];
@@ -81,10 +85,16 @@ var ChatBot = function () {
 		    if (pattern.callback != undefined) {
 			pattern.callback(matches, response, callback);
 		    } else {
-		    	callback(this.addChatEntry(response, "bot"));
+		    	callback(text);
                     }
+
+			matchedSomething = true;
+            	}
+		if (!matchedSomething && i == patterns.length - 1) {
+		    wrongEntries.write(text + '\n');
+		    callback({bot: true, body: [{type: 'title', content: "Oops"}, {type: 'text', content: "Pardon je n'ai pas compris votre recherche"}]});
 		}
-            }
+	     }
         },
         addPatternObject: function (obj) {
             patterns.push(obj);
@@ -130,11 +140,11 @@ function formatMessage(message, type, content) {
 	return messageData;
 }
 
-ChatBot.addPattern("(.*)", undefined, function(matches, response, callback) {
+/*ChatBot.addPattern("(.*)", undefined, function(matches, response, callback) {
 	getId(matches[0], function(result) {
 		callback(formatMessage('title', 'text', result), "bot");
 	});
-});
+});*/
 
 //ChatBot.addPattern("(?:my name is|I'm|I am) (.*)", "hi $1, thanks for talking to me today", function (matches) {
 //     ChatBot.setHumanName(matches[1]);
@@ -288,6 +298,104 @@ ChatBot.addPattern("(.*)vaccin(.*)( )(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')
 
 ChatBot.addPattern("(.*)et (toi|vous)(.*)", undefined, function(matches, response, callback) {
 	callback(formatMessage("Ca va très bien, merci !", 'text', "En quoi puis-je vous aider ?"));
+});
+
+ChatBot.addPattern("(.*)santes?(.*)(en|a|dans (le|la|l)?|de|du|au|le|la|l)( |')(.*) (.*)", undefined, function(matches, response, callback) {
+        callback(formatMessage("Je viens de vous trouver des informations concernant la santé à l'endroit suivant", 'html', "L’OMS ou Organisation Mondiale de la Santé, une institution spécialisée de l\'ONU, publie régulièrement des classements des meilleurs systèmes de santé mondiaux. Voici le plus recent de ces \<a href = \"rapports http://thepatientfactor.com/canadian-health-care-information/world-health-organizations-ranking-of-the-worlds-health-systems\"\>rapports\</a\>"));
+});
+
+
+ChatBot.addPattern("(.*)erasmus(.*)(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')(.*) (.*)", undefined, function(matches, response, callback) {
+        callback(formatMessage(undefined, 'text', "Le programme Erasmus est réservé aux pays de l’espace économique européen ainsi que la Turquie et la Macédoine. Il existe néanmoins le programme Erasmus mundus qui est une extension d’Erasmus à l’échelle mondiale."));
+});
+
+
+ChatBot.addPattern("(.*)ecoles?(.*)(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')(.*) (.*)", undefined, function(matches, response, callback) {
+        callback(formatMessage(undefined, 'html', "<p>Je viens de vous trouver 495 établissements français dans 137 pays regroupant regroupant plus de 340 000 étudiants de tous âges ! <\br> Voici une <a href =\"http://www.aefe.fr/reseau-scolaire-mondial/rechercher-un-etablissement\">carte</a> de la repartition de ces etablissements dans le monde accompagnee d’un rapport de l’AEFE sur ceux-ci.</p>"));
+});
+
+
+ChatBot.addPattern("(.*)ecoles?(.*)(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')(.*) (.*)", undefined, function(matches, response, callback) {
+        callback(formatMessage(undefined, 'html', "<p>Je viens de vous trouver 495 établissements français dans 137 pays regroupant regroupant plus de 340 000 étudiants de tous âges ! <\br> Voici une <a href =\"http://www.aefe.fr/reseau-scolaire-mondial/rechercher-un-etablissement\">carte</a> de la repartition de ces etablissements dans le monde accompagnee d’un rapport de l’AEFE sur ceux-ci.\</p\>"));
+});
+
+
+ChatBot.addPattern("((b|B)onjour|(b|B)onsoir|(s|S)alut|(h|H)ey|(y|Y)o|hi|hello|slt|bjr)(.*)", undefined, function(matches, response, callback) {
+        callback(formatMessage("Ca va très bien, merci !", 'text', "En quoi puis-je vous aider ?"));
+});
+
+
+ChatBot.addPattern("(.*)(animal|animaux)(.*)", "response", undefined, function(matches, response, callback) {
+        callback(formatMessage(undefined, 'html', "Cela dépendra du nombre, du pays et de l’animal en question! Voilà une page qui vous renseignera plus en détail sur la question. https://www.service-public.fr/particuliers/vosdroits/F21374"));
+});
+
+
+ChatBot.addPattern("(.*)( )visa( )(.*)( )((en|a|dans (le|la)?|de|du|aux?|le|la|l?)( |'))?(.*)", undefined, function(matches, response, callback) {
+        callback(formatMessage(undefined, 'html', "En tout cas pas vous n'avez pas besoin de visa pour les pays de l'EEE et la suite. Pour plus d'informations regardez sur cette page du service public: https://www.service-public.fr/particuliers/vosdroits/F1358"));
+});
+
+ChatBot.addPattern("(.*)demenage(.*)", undefined, function(matches, response, callback) {
+        callback(formatMessage(undefined, 'html', "Je vous ai trouvé un comparateur pour votre déménagement international! Voici: http://www.comparerdemenageurs.fr/v1/"));
+});
+
+
+// address of the embassy
+ChatBot.addPattern("(.*)(adresse|localisation|trouve)(.*)(ambassade)(.*)( )(en|a|dans (le|la)?|de|du|aux?|le|la|l?)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
+        getId(matches[10], function(country) {
+                if (country == undefined) {
+                        country = getCountryByCity(matches[10]);
+                }
+
+                getId(country, function(idCountry) {
+                        getEmbassy(idCountry, function(address) {
+                                callback(formatMessage("L'ambassade de France du lieu suivant: : " + country + " se situe à l'adresse suivante : ", "html", address));
+                        });
+                });
+        });
+
+});
+
+
+// address of the consulat TO VERIFY
+
+ChatBot.addPattern("(.*)(adresse|localisation|trouve)(.*)(consulat)(.*)( )(en|a|dans (le|la)?|de|du|aux?|le|la|l?)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
+        getId(matches[10], function(country) {
+                if (country == undefined) {
+                        country = getCountryByCity(matches[10]);
+                }
+
+                getId(country, function(idCountry) {
+                        getConsulat(idCountry, function(address) {
+                                callback(formatMessage("Les consulats de France du lieu suivant: " + country + " se situent aux adresses suivantes : ", "html", address));
+                        });
+                });
+        });
+
+});
+
+
+
+// sanitary info for each country 
+
+ChatBot.addPattern("(.*)vaccin(.*)( )(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
+        getId(matches[7], function(country) {
+                if (country == undefined) {
+                        country = getCountryByCity(matches[7]);
+                }
+
+                getId(country, function(idCountry) {
+                        getCountryDetails(idCountry, "sante", function(sante_info) {
+                                callback(formatMessage("Les indications de vaccination pour aller au lieu suivant: " + country + " sont : ", "html", sante_info["texte"] + "\nQuant aux centres de vaccinations, vous trouverez une carte interactive qui vous aidera à en trouver dans votre departement!"));
+                        });
+                });
+        });
+
+});
+
+//ChatBot.addPattern("(.*)et (toi|vous)(.*)", formatMessage("Ca va très bien, merci !", 'text', "En quoi puis-je vous aider ?"), undefined);
+
+ChatBot.addPattern("(.*)et (toi|vous)(.*)", undefined, function(matches, response, callback) {
+        callback(formatMessage("Ca va très bien, merci !", 'text', "En quoi puis-je vous aider ?"));
 });
 
 function getCountryByCity(city, callback) {
