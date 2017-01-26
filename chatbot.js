@@ -127,17 +127,25 @@ function formatMessage(message, type, content) {
 	return messageData;
 }
 
-ChatBot.addPattern("^hi$", "Howdy, friend", function(matches, response) {
-	return formatMessage(response, 'text', 'this is a string coming from the API');
-});
+ChatBot.addPattern("(.*)vaccin(.*)( )(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')(.*)", "response", undefined, function (matches) {
+    ChatBot.addChatEntry("Les indications de vaccination pour aller au lieu suivant: " + matches[7] + " sont : text to insert Quant aux centres de vaccinations, vous trouverez une carte interactive qui vous aidera à en trouver dans votre departement!");
+},"");
 
-//ChatBot.addPattern("(?:my name is|I'm|I am) (.*)", "hi $1, thanks for talking to me today", function (matches) {
-//     ChatBot.setHumanName(matches[1]);
-//},"Say 'My name is [your name]' or 'I am [name]' to be called that by the bot");
-// ChatBot.addPattern("(what is the )?meaning of life", "response", "42", undefined, "Say 'What is the meaning of life' to get the answer.");
-//ChatBot.addPattern("compute ([0-9]+) plus ([0-9]+)", "response", undefined, function (matches) {
-//    ChatBot.addChatEntry("That would be "+(1*matches[1]+1*matches[2])+".","bot");
-//},"Say 'compute [number] plus [number]' to make the bot your math monkey");
+ChatBot.addPattern("(.*)demenage(.*)", "response", undefined, function (matches) {
+    ChatBot.addChatEntry("Je vous ai trouvé un comparateur pour votre déménagement international! Voici: http://www.comparerdemenageurs.fr/v1/");
+},"");
+
+ChatBot.addPattern("(.*)(adresse|localisation|trouve)(.*)(ambassade|consulat)(.*)( )((en|a|dans (le|la)?|de|du|aux?|le|la|l?)( |'))?(.*)", "response", undefined, function (matches) {
+    ChatBot.addChatEntry("L'ambassade ou consulat de France du lieu suivant: " + matches[11] + " se situe à l'adresse suivante");
+},"");
+
+ChatBot.addPattern("(.*)(animal|animaux)(.*)", "response", undefined, function (matches) {
+    ChatBot.addChatEntry("Cela dépendra du nombre, du pays et de l’animal en question! Voilà une page qui vous renseignera plus en détail sur la question. https://www.service-public.fr/particuliers/vosdroits/F21374");
+},"");
+
+ChatBot.addPattern("(.*)( )visa( )(.*)( )((en|a|dans (le|la)?|de|du|aux?|le|la|l?)( |'))?(.*)", "response", undefined, function (matches) {
+    ChatBot.addChatEntry("En tout cas pas vous n'avez pas besoin de visa pour les pays de l'EEE et la suite. Pour plus d'informations regardez sur cette page du service public: https://www.service-public.fr/particuliers/vosdroits/F1358");
+},"");
 
 // Create API call for querry
 // Figure out what querries should we include
