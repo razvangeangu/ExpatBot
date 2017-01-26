@@ -112,8 +112,11 @@ ChatBot.init();
 
 function formatMessage(message, type, content) {
 	var messageData = {
-		title: message,
       		body: [
+			{
+			  type: 'title',
+			  content: message
+			},
 			{
 			  type: type,
 			  content: content
@@ -125,7 +128,7 @@ function formatMessage(message, type, content) {
 }
 
 ChatBot.addPattern("^hi$", "Howdy, friend", function(matches, response) {
-	return response + " I GOT YA " + matches;
+	return formatMessage(response, 'text', 'this is a string coming from the API');
 });
 
 //ChatBot.addPattern("(?:my name is|I'm|I am) (.*)", "hi $1, thanks for talking to me today", function (matches) {
