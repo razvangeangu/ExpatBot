@@ -12,7 +12,7 @@ function getId(countryName, callback) {
 	return getData("http://diplomatie.gouv.fr/fr/mobile/json_full/flux-cav-json-liste_pays.json", function(response) { 
 		for(var item in response) { 
 			if(response[item]["nom"].match(countryName)) { 
-				callback(response[item]["iso2"]); 
+				return callback(response[item]["iso2"]); 
 			}
 		}
 	}); 
@@ -125,3 +125,7 @@ module.exports.getName = getName;
 module.exports.getCountryDetails = getCountryDetails; 
 module.exports.getAlerts = getAlerts; 
 module.exports.getCheckAlert = getCheckAlert; 
+
+getId('af', function(result) {
+	console.log(result);
+});

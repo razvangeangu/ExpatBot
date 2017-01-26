@@ -3,7 +3,6 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var expat = require('./expat.js');
 var bot = require('./chatbot.js');
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -41,7 +40,9 @@ io.on('connection', socket => {
     console.log(`${data.username}: ${data.message}`);
 
     // message received from client, now broadcast it to everyone else
-    socket.broadcast.emit('server:message', parse(data.message));
+    parse(data.message, function(result) {
+		socket.broadcast.emit('server:message', result);
+	});
   });
 
   socket.on('disconnect', () => {
@@ -49,9 +50,13 @@ io.on('connection', socket => {
   });
 });
 
-function parse(message) {
-	console.log('Bot: ' + JSON.stringify(bot.parse(message)));
-	return bot.parse(message);
+function parse(message, callback) {
+	//console.log('Bot: ' + JSON.stringify(bot.parse(message)));
+	//return bot.parse(message);
+	bot.parse(message, function(result) {
+		console.log('Bot: ' + JSON.stringify(result));
+		callback(result);
+	});
 }
 
 http.listen(80, function(){
