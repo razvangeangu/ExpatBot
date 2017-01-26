@@ -92,7 +92,7 @@ var ChatBot = function () {
             	}
 		if (!matchedSomething && i == patterns.length - 1) {
 		    wrongEntries.write(text + '\n');
-		    callback({bot: true, body: [{type: 'title', content: "Oops"}, {type: 'text', content: "Pardon je n'ai pas compris votre recherche"}]});
+		    callback({bot: true, body: [{type: 'title', content: "Oups"}, {type: 'text', content: "Pardon je n'ai pas compris votre recherche"}]});
 		}
 	     }
         },
@@ -222,7 +222,8 @@ function getEmbassy(idCountry, callback) {
 			if(item == idCountry) { 
 				for (var i in response[item]) { 
 					if(response[item][i]['type'].match('ambassade')) {
-						result = response[item][i]["adresse"] + ", " + response[item][i]["ville"]; 
+						result = response[item][i]["adresse"] + ", " + response[item][i]["ville"];
+						break; 
 					}
 				}
 			}
@@ -258,6 +259,7 @@ function getCountryDetails(idCountry, code, callback) {
 			for (var i in response[item]) {
 				if (response[item][i]["code"] && response[item][i]["code"].match(code)) {
 					result = response[item][i];
+					break;
 				}
 			}
 		}
@@ -292,11 +294,11 @@ function getCheckAlert(idCountry,callback) {
 
 
 ChatBot.addPattern("(.*)vaccin(.*)( )(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')(.*)", undefined, function(matches, response, callback) {
-	getId(matches[7], function(country) {
+	getId(matches[6], function(country) {
 		if (country == undefined) {
-			country = getCountryByCity(matches[7]);
+			country = getCountryByCity(matches[6]);
 		} else {
-			country = matches[7];
+			country = matches[6];
 		}
 
 		getId(country, function(idCountry) {
@@ -325,26 +327,26 @@ ChatBot.addPattern("(.*)erasmus(.*) (en|a|dans (le|la|l)?|de|du|aux?|le|la|l)( |
 
 
 ChatBot.addPattern("(.*)ecoles?(.*) (en|a|dans (le|la|l)?|de|du|aux?|le|la|l)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
-        callback(formatMessage(undefined, 'html', "<p>Je viens de vous trouver 495 établissements français dans 137 pays regroupant regroupant plus de 340 000 étudiants de tous âges ! <\br> Voici une <a href =\"http://www.aefe.fr/reseau-scolaire-mondial/rechercher-un-etablissement\">carte</a> de la repartition de ces etablissements dans le monde accompagnee d’un rapport de l’AEFE sur ceux-ci.</p>"));
+        callback(formatMessage(undefined, 'html', "<p>Je viens de vous trouver 495 établissements français dans 137 pays regroupant regroupant plus de 340 000 étudiants de tous âges ! <br> Voici une <a href =\"http://www.aefe.fr/reseau-scolaire-mondial/rechercher-un-etablissement\">carte</a> de la repartition de ces etablissements dans le monde accompagnee d’un rapport de l’AEFE sur ceux-ci.</p>"));
 });
 
 
 ChatBot.addPattern("((b|B)onjour|(b|B)onsoir|(s|S)alut|(h|H)ey|(y|Y)o|hi|hello|slt|bjr)(.*)", undefined, function(matches, response, callback) {
-        callback(formatMessage("Ca va très bien, merci !", 'text', "En quoi puis-je vous aider ?"));
+        callback(formatMessage("Ca va très bien, merci !", 'text', "En quoi puis-je vous aider?"));
 });
 
-
+/*
 ChatBot.addPattern("(.*)(animal|animaux)(.*)", "response", undefined, function(matches, response, callback) {
         callback(formatMessage(undefined, 'html', "<p>Cela dépendra du nombre, du pays et de l’animal en question! Voilà une <a href=\"https://www.service-public.fr/particuliers/vosdroits/F21374\">page</a> qui vous renseignera plus en détail sur la question.</p>"));
 });
-
+*/
 
 ChatBot.addPattern("(.*)( )visa( )(.*)( )((en|a|dans (le|la)?|de|du|aux?|le|la|l?)( |'))?(.*)", undefined, function(matches, response, callback) {
         callback(formatMessage(undefined, 'html', "<p>En tout cas pas vous n'avez pas besoin de visa pour les pays de l'EEE et la suite. Pour plus d'informations regardez sur cette <a href=\"https://www.service-public.fr/particuliers/vosdroits/F1358\">page</a> du service public:</p>"));
 });
 
 ChatBot.addPattern("(.*)demenage(.*)", undefined, function(matches, response, callback) {
-        callback(formatMessage(undefined, 'html', "<p>Je vous ai trouvé un comparateur pour votre déménagement international! <a href=\"http://www.comparerdemenageurs.fr/v1/\">Le voici.</a></p>));
+        callback(formatMessage(undefined, 'html', "<p>Je vous ai trouvé un comparateur pour votre déménagement international! <a href=\"http://www.comparerdemenageurs.fr/v1/\">Le voici.</a></p>"));
 });
 
 ChatBot.addPattern("(.*)(rencontrer?s?|reseau|groupe|comm?unn?aute|amicale)( )(.*)( )(en|a|dans (le|la)?|de|du|aux?|le|la|l?)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
@@ -354,10 +356,10 @@ ChatBot.addPattern("(.*)(rencontrer?s?|reseau|groupe|comm?unn?aute|amicale)( )(.
 ChatBot.addPattern("(.*)(chocs?|differences?|cultures?|cafard|solitude)(.*)", undefined, function(matches, response, callback) {
         callback(formatMessage(undefined, 'html', "<p>Le choc culturel a tendance à frapper chaque individu d'une manière différente, et même des membres d'une même famille peuvent avoir des réactions très différentes au changement. La clé est de comprendre le phénomène et de s'y préparer. Vous risquez de vivre ce choc en quatre étapes: après l'arrivée, la plupart des gens ressentent une euphorie initiale. Cela est parfois appelé \"la période de lune de miel\".<br/>Puis, un désenchantement soudain, une irritabilité, confusion, peut-être même ressentiment à l'égard de votre pays d'adoption. Les différences entre votre nouvelle maison et lieu d'origine deviennent des sources de frustration. Ensuite vous sentirez un progressif ajustement à la vie d'étranger. Finalement, c'est la dernière étape, vous faites vraiment l'expérience d'adaptation et de bi-culturalisme. Plutôt que de perdre une partie de vous-même, vous êtes devenu une personne plus multi-culture en communion saine avec votre pays d’adoption.</p>"));
 });
-
-ChatBot.addPattern("(.*)(assur(er?|ances?)( )(.*)", undefined, function(matches, response, callback) {
+/*
+ChatBot.addPattern("(.*)(assur(e(r)?|ance(s)?)( )(.*)", undefined, function(matches, response, callback) {
         callback(formatMessage(undefined, 'html', "<p>Pour les assurances à l'étranger le panel de choix est assez grand… Entre la CFE, Expat Assure et plein d’autre… <a href=\"https://www.service-public.fr/particuliers/vosdroits/F2169\">Cette page</a> est vraiment complète et j'espère qu’elle saura bien vous diriger vers l’assurance la plus adaptée pour vous!</p>"));
-});
+});*/
 
 ChatBot.addPattern("(.*)(formalites?|avant de partir|avant(.*)depart)(.*)", undefined, function(matches, response, callback) {
         callback(formatMessage(undefined, 'html', "<p>Veuillez vous assurer que vous avez bien un passeport en cours de validité et vérifier si le pays en question exige une certaine durée de validité et si un visa est nécessaire. Aussi vérifiez que vos vaccinations sont à jour et si d’autre sont demandés par votre pays d’accueil.<br/>Si vous désirez plus d’informations sur quoi que ce soit, veuillez préciser votre requête.</p>"));
@@ -395,11 +397,14 @@ ChatBot.addPattern("(.*)consulat( )((de france|francaise)( ))?(en|a|dans (le|la)
                 if (country == undefined) {
                         country = getCountryByCity(matches[9]);
 			getId(country, function(idCountry) {
-				callback(formatMessage("Les consulats de France du lieu suivant: " + matches[9] + " se situent aux adresses suivantes : ", "html", address));
+
+				var result = address.map(function(x) { return x["nom"] + ", " + x["adresse"] }).join("\n");
+				callback(formatMessage("Les consulats de France du lieu suivant: " + matches[9] + " se situent aux adresses suivantes : ", "html", result));
 			})
                 } else {
-			getConsulat(idCountry, function(address) {
-				callback(formatMessage("Les consulats de France du lieu suivant: " + matches[9] + " se situent aux adresses suivantes : ", "html", address));
+			getConsulat(country, function(address) {
+				var result = address.map(function(x) { return x["nom"] + ", " + x["adresse"] }).join("\n");
+				callback(formatMessage("Les consulats de France du lieu suivant: " + matches[9] + " se situent aux adresses suivantes : ", "html", result));
 			});
 		}
 
@@ -412,22 +417,18 @@ ChatBot.addPattern("(.*)consulat( )((de france|francaise)( ))?(en|a|dans (le|la)
 // sanitary info for each country 
 
 ChatBot.addPattern("(.*)vaccin(.*)( )(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
-        getId(matches[6], function(country) {
-                if (country == undefined) {
-                        country = getCountryByCity(matches[6]);
-                }
-
-                getId(country, function(idCountry) {
-                        getCountryDetails(idCountry, "sante", function(sante_info) {
-                                callback(formatMessage("Les indications de vaccination pour aller au lieu suivant: " + matches[6] + " sont : ", "html", sante_info["texte"] + "\nQuant aux centres de vaccinations, vous trouverez une carte interactive qui vous aidera à en trouver dans votre departement!"));
-                        });
-                });
+        getId(matches[7], function(country) {	
+		getCountryDetails(country, "sante", function(sante_info) {
+			if (sante_info != undefined) {
+				callback(formatMessage("Les indications de vaccination pour aller au lieu suivant: " + matches[7] + " sont : ", "html", sante_info["texte"] + "\nQuant aux centres de vaccinations, vous trouverez une carte interactive qui vous aidera à en trouver dans votre departement!"));
+			}
+		});
         });
 
 });
 
 ChatBot.addPattern("(.*)((voter?)|(procuration)|(election)|(electorale?))(.*) (en|a|dans (le|la|l)?|de|du|aux?|le|la|l)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
-    callback(formatMessage("Pour voter en France, depuis le lieu " + matches[11], 'text', "Il est possible de faire une procuration ou bien de vous inscrire sur les listes électorales du consulat ou de l'ambassade depuis le lieu \"" + matches[11]+ "\", afin de voter sur place."));
+    callback(formatMessage("Pour voter en France, depuis le lieu " + matches[10], 'text', "Il est possible de faire une procuration ou bien de vous inscrire sur les listes électorales du consulat ou de l'ambassade depuis le lieu \"" + matches[10]+ "\", afin de voter sur place."));
 });
 
 //ChatBot.addPattern("(.*)et (toi|vous)(.*)", formatMessage("Ca va très bien, merci !", 'text', "En quoi puis-je vous aider ?"), undefined);
