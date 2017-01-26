@@ -169,12 +169,16 @@ function getData(url, callback) {
 }
 
 function getId(countryName, callback) { 
-	return getData("http://diplomatie.gouv.fr/fr/mobile/json_full/flux-cav-json-liste_pays.json", function(response) { 
+	getData("http://diplomatie.gouv.fr/fr/mobile/json_full/flux-cav-json-liste_pays.json", function(response) { 
+		var result = undefined;
 		for(var item in response) { 
 			if(response[item]["nom"].toLowerCase().match(countryName)) { 
-				callback(response[item]["iso2"]); 
+				result = response[item]["iso2"];
+				break;
 			}
 		}
+
+		callback(result);
 	}); 
 }
 
@@ -192,7 +196,7 @@ function getName(idCountry, callback) {
 	return getData("http://diplomatie.gouv.fr/fr/mobile/json_full/flux-cav-json-liste_pays.json", function(response) {
 		for (var item in response) { 
 	 		if(item == idCountry) {
-	 			callback(response[item]["nom"]); 
+	 			return callback(response[item]["nom"]); 
 	 		}
  		}
 	});
@@ -203,24 +207,30 @@ function getFlag(idCountry, callback) {
 	return getData("http://diplomatie.gouv.fr/fr/mobile/json_full/flux-cav-json-liste_pays.json", function(response) { 
 		for (var item in response) { 
  			if(item == idCountry) { 
- 				callback(response[item]["vignette"]); 
+ 				return callback(response[item]["vignette"]); 
  			}
  		}
 	}); 
 }
 
 function getEmbassy(idCountry, callback) { 
-	return getData("http://diplomatie.gouv.fr/fr/mobile/json_full/flux-cav-json-representations.json", function(response){ 
+	
+	getData("http://diplomatie.gouv.fr/fr/mobile/json_full/flux-cav-json-representations.json", function(response){ 
+		var result = undefined;
+
 		for (var item in response) { 
 			if(item == idCountry) { 
 				for (var i in response[item]) { 
-					if(response[item][i]['type'].match('ambassade')) { 
-						callback(response[item][i]); 
+					if(response[item][i]['type'].match('ambassade')) {
+						result = response[item][i]["adresse"] + ", " + response[item][i]["ville"]; 
 					}
 				}
 			}
 		}
+
+		callback(result);
 	});
+	
 }
 
 function getConsulat(idCountry, callback) { 
@@ -245,7 +255,7 @@ function getCountryDetails(idCountry, code, callback) {
 		for(var item in response) { 
 			for (var i in response[item]) {
 				if (response[item][i]["code"] && response[item][i]["code"].match(code)) {
-					callback(response[item][i]);
+					return callback(response[item][i]);
 				}
 			}
 		}
@@ -259,7 +269,7 @@ function getAlerts(callback) {
 		for(var item in response['alertes']) { 
 			alerts.push(response['alertes'][item]);
 		}
-		callback(alerts); 
+		return callback(alerts); 
 	}); 
 }
 
@@ -272,7 +282,7 @@ function getCheckAlert(idCountry,callback) {
 				alerts.push(response[item]); 
 			}
 		} 
-		callback(alerts); 
+		return callback(alerts); 
 	}); 
 }
 
@@ -287,7 +297,7 @@ ChatBot.addPattern("(.*)vaccin(.*)( )(en|a|dans (le|la)?|de|du|au|le|la|l?)( |')
 
 		getId(country, function(idCountry) {
 			getCountryDetails(idCountry, "sante", function(sante_info) {
-				callback(formatMessage("Les indications de vaccination pour aller au lieu suivant: " + country + " sont : ", "html", sante_info["texte"] + "\nQuant aux centres de vaccinations, vous trouverez une carte interactive qui vous aidera à en trouver dans votre departement!"));
+				return callback(formatMessage("Les indications de vaccination pour aller au lieu suivant: " + country + " sont : ", "html", sante_info["texte"] + "\nQuant aux centres de vaccinations, vous trouverez une carte interactive qui vous aidera à en trouver dans votre departement!"));
 			});
 		});
 	});
@@ -336,16 +346,20 @@ ChatBot.addPattern("(.*)demenage(.*)", undefined, function(matches, response, ca
 
 // address of the embassy
 ChatBot.addPattern("(.*)ambassade( )((de france|francaise)( ))?(en|a|dans (le|la)?|de|du|aux?|le|la|l|d?)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
-        getId(matches[10], function(country) {
+        getId(matches[9], function(country) {
                 if (country == undefined) {
-                        country = getCountryByCity(matches[10]);
-                }
+                        country = getCountryByCity(matches[9]);
+			getId(country, function(idCountry) {
+				getEmbassy(idCountry, function(address) {
+					callback(formatMessage("L'ambassade de France du lieu suivant: : " + matches[9] + " se situe à l'adresse suivante : ", "html", address));
+				});
+			});
+                } else {
+			getEmbassy(country, function(address) {
+				callback(formatMessage("L'ambassade de France du lieu suivant: " + matches[9] + " se situe à l'adresse suivante : ", "html", address));
+			});
+		}
 
-                getId(country, function(idCountry) {
-                        getEmbassy(idCountry, function(address) {
-                                callback(formatMessage("L'ambassade de France du lieu suivant: : " + country + " se situe à l'adresse suivante : ", "html", address));
-                        });
-                });
         });
 
 });
@@ -354,16 +368,18 @@ ChatBot.addPattern("(.*)ambassade( )((de france|francaise)( ))?(en|a|dans (le|la
 // address of the consulat TO VERIFY
 
 ChatBot.addPattern("(.*)consulat( )((de france|francaise)( ))?(en|a|dans (le|la)?|de|du|aux?|le|la|l|d?)( |')([a-z\-]*)(.*)", undefined, function(matches, response, callback) {
-        getId(matches[10], function(country) {
+        getId(matches[9], function(country) {
                 if (country == undefined) {
-                        country = getCountryByCity(matches[10]);
-                }
+                        country = getCountryByCity(matches[9]);
+			getId(country, function(idCountry) {
+				callback(formatMessage("Les consulats de France du lieu suivant: " + matches[9] + " se situent aux adresses suivantes : ", "html", address));
+			})
+                } else {
+			getConsulat(idCountry, function(address) {
+				callback(formatMessage("Les consulats de France du lieu suivant: " + matches[9] + " se situent aux adresses suivantes : ", "html", address));
+			});
+		}
 
-                getId(country, function(idCountry) {
-                        getConsulat(idCountry, function(address) {
-                                callback(formatMessage("Les consulats de France du lieu suivant: " + country + " se situent aux adresses suivantes : ", "html", address));
-                        });
-                });
         });
 
 });
