@@ -6,6 +6,9 @@ The bot responds to querries written or spoken in french and here are some examp
   - où est l'ambassade d'Allemagne
   - quels sont les ecoles en espagne
   - chocs des cultures
+  
+[Watch presentation here](https://www.facebook.com/france.diplomatie/videos/10154818132763260/)
+[logo]: /Screenshot.png "Screenshot"
 
 ### Tech
 
