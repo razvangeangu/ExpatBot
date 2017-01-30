@@ -8,7 +8,8 @@ The bot responds to querries written or spoken in french and here are some examp
   - chocs des cultures
   
 [Watch presentation here](https://www.facebook.com/france.diplomatie/videos/10154818132763260/)
-[logo]: /Screenshot.png "Screenshot"
+
+![](/Screenshot.png "Screenshot")
 
 ### Tech
 
